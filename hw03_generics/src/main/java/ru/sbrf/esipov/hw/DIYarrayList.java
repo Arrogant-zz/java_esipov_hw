@@ -113,8 +113,6 @@ public class DIYarrayList<T> implements List<T> {
 
             System.arraycopy(currentArray, 0, newArray, 0, size);
 
-            newArray[size] = t;
-
             currentArray = newArray;
         }
 
