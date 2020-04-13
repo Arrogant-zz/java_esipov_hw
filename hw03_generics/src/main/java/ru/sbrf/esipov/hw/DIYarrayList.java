@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class DIYarrayList<T> implements List<T> {
     private int size;
     private Object[] currentArray;
+    private final int GROW_COEF = 2;
 
     public DIYarrayList() {
         currentArray = new Object[0];
@@ -107,14 +108,18 @@ public class DIYarrayList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-        Object[] newArray = new Object[size + 1];
+        if (currentArray.length <= size) {
+            Object[] newArray = new Object[(size + 1) * GROW_COEF];
 
-        if (size >= 0) System.arraycopy(currentArray, 0, newArray, 0, size);
+            System.arraycopy(currentArray, 0, newArray, 0, size);
 
-        newArray[size] = t;
+            newArray[size] = t;
 
+            currentArray = newArray;
+        }
+
+        currentArray[size] = t;
         size += 1;
-        currentArray = newArray;
         return true;
     }
 

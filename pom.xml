@@ -10,6 +10,7 @@
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>hw03_generics</module>
+    <module>hw05_gc</module>
   </modules>
 
   <name>java_esipov_hw</name>
