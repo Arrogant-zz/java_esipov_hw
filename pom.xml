@@ -11,6 +11,7 @@
   <modules>
     <module>hw01_helloworld</module>
     <module>hw03_generics</module>
+    <module>hw05_gc</module>
   </modules>
 
   <name>java_esipov_hw</name>
