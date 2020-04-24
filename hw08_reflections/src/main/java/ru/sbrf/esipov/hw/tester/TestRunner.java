@@ -8,16 +8,22 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class TestRunner {
     private Class<?> classTest;
     private TestResult tResult;
+    private ArrayList<Method> beforeMethods;
+    private ArrayList<Method> afterMethods;
 
     public TestRunner(String className) throws ClassNotFoundException {
         this.classTest = Class.forName(className);
+
+        beforeMethods = findMethodsWithAnnotation(Before.class);
+        afterMethods = findMethodsWithAnnotation(After.class);
     }
 
-    public TestResult run() throws Exception {
+    public void run() throws Exception {
         tResult = new TestResult();
 
         for (Method method : classTest.getDeclaredMethods()) {
@@ -26,14 +32,15 @@ public class TestRunner {
             }
         }
 
-        return tResult;
+        System.out.println("All tests: " + tResult.getAll() + " | Fail tests: " + tResult.getFail() + " | Success tests: " + tResult.getSuccess());
+        tResult.printResults();
     }
 
     private void runTest(Method methodTest) throws Exception {
         Constructor<?> constructor = classTest.getConstructor();
         Object classTestObject = constructor.newInstance();
 
-        invokeMethodsWithAnnotation(Before.class, classTestObject);
+        invokeMethods(beforeMethods, classTestObject);
 
         try {
             methodTest.invoke(classTestObject);
@@ -43,14 +50,22 @@ public class TestRunner {
             tResult.addResult(methodTest.getName(), TestResultStatus.FAIL);
         }
 
-        invokeMethodsWithAnnotation(After.class, classTestObject);
+        invokeMethods(afterMethods, classTestObject);
     }
 
-    private void invokeMethodsWithAnnotation(Class<? extends Annotation> annotation, Object classTestObject) throws InvocationTargetException, IllegalAccessException {
+    private ArrayList<Method> findMethodsWithAnnotation(Class<? extends Annotation> annotation) {
+        ArrayList<Method> methods = new ArrayList<>();
         for (Method method : classTest.getDeclaredMethods()) {
             if (method.isAnnotationPresent(annotation)) {
-                method.invoke(classTestObject);
+                methods.add(method);
             }
+        }
+        return methods;
+    }
+
+    private void invokeMethods(ArrayList<Method> methods, Object classTestObject) throws InvocationTargetException, IllegalAccessException {
+        for (Method method : methods) {
+            method.invoke(classTestObject);
         }
     }
 }
