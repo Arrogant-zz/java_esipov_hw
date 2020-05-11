@@ -2,20 +2,21 @@ package ru.sbrf.esipov.hw.atm;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.stream.Stream;
+import java.util.EnumSet;
 
 public class MyATM implements UserATM, AdminATM {
-    private EnumMap<Bill, Integer> bills;
+    private EnumMap<Bill, Cassette> bills;
 
     public MyATM() {
         bills = new EnumMap<>(Bill.class);
+        EnumSet.allOf(Bill.class).forEach(bill -> bills.put(bill, new Cassette()));
     }
 
     @Override
     public int getBalance() {
         int balance = 0;
         for (var key : bills.keySet()) {
-            balance += key.getNominal() * bills.get(key);
+            balance += key.getNominal() * bills.get(key).getNumberOfBills();
         }
         return balance;
     }
@@ -23,12 +24,7 @@ public class MyATM implements UserATM, AdminATM {
     @Override
     public void takeBills(Bill[] bills) {
         for (Bill bill : bills) {
-            if (this.bills.containsKey(bill)) {
-                this.bills.put(bill, this.bills.get(bill) + 1);
-            }
-            else {
-                this.bills.put(bill, 1);
-            }
+            this.bills.get(bill).putBills(1);
         }
     }
 
@@ -37,8 +33,8 @@ public class MyATM implements UserATM, AdminATM {
         ArrayList<Bill> resultBills = new ArrayList<>();
 
         for (var key : bills.keySet()) {
-            if (bills.get(key) > 0 && key.getNominal() <= amount) {
-                int cntBill = Math.min(amount / key.getNominal(), bills.get(key));
+            if (bills.get(key).getNumberOfBills() > 0 && key.getNominal() <= amount) {
+                int cntBill = Math.min(amount / key.getNominal(), bills.get(key).getNumberOfBills());
                 amount -= cntBill * key.getNominal();
                 for (int i = 0; i < cntBill; i++) {
                     resultBills.add(key);
@@ -47,7 +43,7 @@ public class MyATM implements UserATM, AdminATM {
         }
 
         if (amount == 0) {
-            resultBills.forEach(bill -> bills.put(bill, bills.get(bill) - 1));
+            resultBills.forEach(bill -> bills.get(bill).takeBill());
         }
         else {
             throw new IllegalArgumentException("Not enough money in ATM");
