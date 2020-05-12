@@ -14,6 +14,9 @@ public class Cassette implements ATMCassette {
 
     @Override
     public void putBills(int numberOfBills) {
+        if (numberOfBills < 0) {
+            throw new IllegalArgumentException("numberOfBills must be greater then zero");
+        }
         count += numberOfBills;
     }
 
