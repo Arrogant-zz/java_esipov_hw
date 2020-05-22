@@ -1,12 +1,17 @@
 package ru.sbrf.esipov.hw.atm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Cassette implements ATMCassette {
+    @JsonProperty
     private int count;
 
-    void Cassette() {
+    public Cassette() {
         count = 0;
     }
 
+    @JsonIgnore
     @Override
     public int getNumberOfBills() {
         return count;

@@ -20,4 +20,13 @@ public enum Bill {
         return this.nominal;
     }
 
+    public static Bill getByNominal(int nominal){
+        for (Bill bill : values()) {
+            if (bill.nominal == nominal) {
+                return bill;
+            }
+        }
+
+        return null;
+    }
 }
