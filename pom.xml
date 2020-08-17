@@ -14,6 +14,7 @@
     <module>hw05_gc</module>
     <module>hw08_reflections</module>
     <module>hw10_atm</module>
+    <module>hw18_atm_hibernate</module>
   </modules>
 
   <name>java_esipov_hw</name>
